@@ -12,18 +12,6 @@ field edge = 96
 first field pixel cords = 49 x 49
 *********************************************/
 
-
-const PieceCodes = {
-    //Black pieces
-    bPawn: "bp",
-    bKnight: "bkn",
-    bBishop: "bb",
-    bRook: "br",
-    bQueen: "bq",
-    bKing: "bki",
-}
-
-
 export class Board {
     constructor() {
         this.canvas = document.getElementById("canvas");
