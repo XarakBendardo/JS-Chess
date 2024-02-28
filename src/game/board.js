@@ -6,7 +6,7 @@ field edge = 96
 *********************************************/
 
 
-class Background {
+class Board {
     constructor() {
         this.path = "../../resource/sprites/board.png";
         this.canvas = document.getElementById("canvas");
@@ -23,4 +23,4 @@ class Background {
     }
 }
 
-export let background = new Background();
+export let board = new Board();

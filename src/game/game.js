@@ -1,8 +1,8 @@
-import { background } from "./background.js";
+import { board } from "./board.js";
 
 
 export class Game {
     constructor() {
-        this.background = background;
+        this.board = board;
     }
 }
