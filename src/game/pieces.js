@@ -1,7 +1,8 @@
 class Piece {
-    constructor(color, spritePosition, x, y) {
+    constructor(color, spritePositionX, x, y) {
         this.color = color;
-        this.spritePosition = spritePosition;
+        this.spritePositionY = this.color === "black" ? 0 : 1;
+        this.spritePositionX = spritePositionX;
         this.x = x;
         this.y = y;
     }

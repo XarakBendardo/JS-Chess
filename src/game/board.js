@@ -42,14 +42,18 @@ export class Board {
         
         //pieces
         for(let piece of this.board) {
-            this.drawPiece(piece.x, piece.y, piece.spritePosition);
+            this.drawPiece(piece.x, piece.y, piece.spritePositionX, piece.spritePositionY);
         }
     }
 
-    drawPiece(pieceX, pieceY, spritePosition) {
+    drawPiece(pieceX, pieceY, spritePositionX, spritePositionY) {
         const xCord = boardMargin + pieceX * fieldSize + (fieldSize - pieceSize) / 2;
         const yCord = boardMargin + pieceY * fieldSize + (fieldSize - pieceSize) / 2;
-        this.context.drawImage(this.pieceSprites, spritePosition * pieceSize, 0, pieceSize, pieceSize, xCord, yCord, pieceSize, pieceSize);
+        this.context.drawImage(this.pieceSprites,
+            spritePositionX * pieceSize, spritePositionY * pieceSize,
+            pieceSize, pieceSize,
+            xCord, yCord,
+            pieceSize, pieceSize);
     }
 
     initBoard(color) {
@@ -102,6 +106,24 @@ export class Board {
                     break;
                 case "bki":
                     this.board.push(new King("black", x, y));
+                    break;
+                case "wp":
+                    this.board.push(new Pawn("white", x, y));
+                    break;
+                case "wkn":
+                    this.board.push(new Knight("white", x, y));
+                    break;    
+                case "wb":
+                    this.board.push(new Bishop("white", x, y));
+                    break;
+                case "wr":
+                    this.board.push(new Rook("white", x, y));
+                    break;
+                case "wq":
+                    this.board.push(new Queen("white", x, y));
+                    break;
+                case "wki":
+                    this.board.push(new King("white", x, y));
                     break;
                 default:
                     break;
