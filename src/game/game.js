@@ -1,8 +1,14 @@
-import { board } from "./board.js";
+import { Board } from "./board.js";
 
 
 export class Game {
     constructor() {
-        this.board = board;
+        
+    }
+
+    init(playerColor="white") {
+        this.playerColor = playerColor;
+        this.board = new Board(this.playerColor);
+        this.board.draw();
     }
 }
