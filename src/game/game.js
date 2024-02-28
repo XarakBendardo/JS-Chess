@@ -9,6 +9,7 @@ export class Game {
     init(playerColor="white") {
         this.playerColor = playerColor;
         this.board = new Board(this.playerColor);
+        this.board.initBoard("black");
         this.board.draw();
     }
 }
