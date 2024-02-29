@@ -24,13 +24,20 @@ export class Board {
         this.pieceSprites = document.getElementById("pieces");
     }
 
+    mapCordsToField(mousePositionX, mousePositionY) {
+        const boardX = Math.floor((mousePositionX - boardMargin) / fieldSize);
+        const boardY = Math.floor((mousePositionY - boardMargin) / fieldSize);
+        const pieceIndex = boardY * boardFieldsPerEdge + boardX;
+        return this.board[pieceIndex];
+    }
+
     draw() {
         // board
         this.context.drawImage(this.backgroundSprite, 0, 0, boardSize, boardSize, 0, 0, boardSize, boardSize);
         
         //pieces
         for(let piece of this.board) {
-            this.drawPiece(piece.x, piece.y, piece.spritePositionX, piece.spritePositionY);
+            if(piece != null) this.drawPiece(piece.x, piece.y, piece.spritePositionX, piece.spritePositionY);
         }
     }
 
@@ -114,6 +121,7 @@ export class Board {
                     this.board.push(new King("white", x, y));
                     break;
                 default:
+                    this.board.push(null);
                     break;
             }
         }
