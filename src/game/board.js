@@ -97,15 +97,14 @@ export class Board {
 
         if(!this.isValidPiecePosition(this.selectedPiece.spriteX(), this.selectedPiece.spriteY())) {
             this.selectedPiece.resetSpritePosition();
-            this.selectedPiece = null;
-            return;
         }
-
-        const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
-        const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
-        const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
-        this.selectedPiece.setPosition(newFieldX, newFieldY);
-        [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+        else {
+            const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
+            const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
+            const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
+            this.selectedPiece.setPosition(newFieldX, newFieldY);
+            [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+        }
         this.selectedPiece = null;
         this.draw();
     }
