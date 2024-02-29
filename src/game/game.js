@@ -15,11 +15,14 @@ export class Game {
         Game.playerColor = playerColor;
         Game.board = new Board(this.playerColor);
         Game.board.initBoard("black");
-        Game.board.draw();
 
         document.addEventListener("mousedown", Game.grabPiece);
         document.addEventListener("mousemove", Game.movePiece);
         document.addEventListener("mouseup", Game.dropPiece);
+    }
+
+    static run() {
+        
     }
 
     static grabPiece(event) {
@@ -33,6 +36,5 @@ export class Game {
 
     static dropPiece(event) {
         Game.board.dropSelectedPiece(event.pageX, event.pageY);
-        Game.board.draw();
     }
 }

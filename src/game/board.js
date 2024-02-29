@@ -23,7 +23,10 @@ export class Board {
         this.backgroundSprite = document.getElementById("board");
         this.pieceSprites = document.getElementById("pieces");
 
+        this.initBoard();
         this.selectedPiece = null;
+
+        this.draw();
     }
 
     getMouseRelativePosition(mousePositionX, mousePositionY) {
@@ -77,6 +80,7 @@ export class Board {
 
         const [fieldX, fieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         this.selectedPiece = this.board[this.mapCordsToIndex(fieldX, fieldY)];
+        this.draw();
     }
 
     moveSelectedPiece(mousePositionX, mousePositionY) {
@@ -103,6 +107,7 @@ export class Board {
         this.selectedPiece.setPosition(newFieldX, newFieldY);
         [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
         this.selectedPiece = null;
+        this.draw();
     }
 
     draw() {
