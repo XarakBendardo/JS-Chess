@@ -58,8 +58,6 @@ export class Board {
 
     isMouseInBoundaries(mousePositionX, mousePositionY) {
         const rect = this.canvas.getBoundingClientRect();
-        console.log(mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + (boardSize - boardMargin)
-            && mousePositionY >= rect.top && mousePositionY < rect.top + (boardSize - boardMargin));
         return mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + (boardSize - boardMargin)
             && mousePositionY >= rect.top && mousePositionY < rect.top + (boardSize - boardMargin);
     }
@@ -79,12 +77,10 @@ export class Board {
 
         const [fieldX, fieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         this.selectedPiece = this.board[this.mapCordsToIndex(fieldX, fieldY)];
-        console.log(this.selectedPiece);
     }
 
     moveSelectedPiece(mousePositionX, mousePositionY) {
         const [x, y] = this.getMouseRelativePosition(mousePositionX, mousePositionY);
-        console.log(x, y);
 
         this.context.clearRect(0, 0, boardSize, boardSize);
         this.selectedPiece.sprite.setPosition(x, y);
@@ -104,7 +100,6 @@ export class Board {
         const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
         const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
-        console.log(newFieldX, newFieldY);
         this.selectedPiece.setPosition(newFieldX, newFieldY);
         [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
         this.selectedPiece = null;
