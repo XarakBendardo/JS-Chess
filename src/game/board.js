@@ -39,8 +39,8 @@ export class Board {
 
     mapMousePosToCords(mousePositionX, mousePositionY) {
         const [relativeX, relativeY] = this.getMouseRelativePosition(mousePositionX, mousePositionY);
-        let fieldX = Math.max(Math.floor(relativeX / fieldSize));
-        let fieldY = Math.max(Math.floor(relativeY / fieldSize));
+        let fieldX = Math.floor(relativeX / fieldSize);
+        let fieldY = Math.floor(relativeY / fieldSize);
         // corrections are required because of error margin left in isValidSpritePosition()
         if (fieldX < 0) fieldX = 0;
         else if (fieldX > boardFieldsPerEdge) fieldX = boardFieldsPerEdge - 1;
