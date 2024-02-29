@@ -18,11 +18,21 @@ export class Game {
         Game.board.draw();
 
         document.addEventListener("mousedown", Game.grabPiece);
-        // document.addEventListener("mouseup", dropPiece);
-        // document.addEventListener("mousemove", movePiece);
+        document.addEventListener("mousemove", Game.movePiece);
+        document.addEventListener("mouseup", Game.dropPiece);
     }
 
     static grabPiece(event) {
         Game.board.selectPiece(event.pageX, event.pageY);
+    }
+
+    static movePiece(event) {
+        if(Game.board.isPieceSelected())
+            Game.board.moveSelectedPiece(event.pageX, event.pageY);
+    }
+
+    static dropPiece(event) {
+        Game.board.dropSelectedPiece(event.pageX, event.pageY);
+        Game.board.draw();
     }
 }

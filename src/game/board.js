@@ -39,8 +39,14 @@ export class Board {
 
     isMouseInBoundaries(mousePositionX, mousePositionY) {
         const rect = this.canvas.getBoundingClientRect();
-        return mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + boardSize
-            && mousePositionY >= rect.top && mousePositionY < rect.top + boardSize;
+        console.log(mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + (boardSize - boardMargin)
+            && mousePositionY >= rect.top && mousePositionY < rect.top + (boardSize - boardMargin));
+        return mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + (boardSize - boardMargin)
+            && mousePositionY >= rect.top && mousePositionY < rect.top + (boardSize - boardMargin);
+    }
+
+    isPieceSelected() {
+        return this.selectedPiece !== null;
     }
 
     selectPiece(mousePositionX, mousePositionY) {
@@ -53,20 +59,23 @@ export class Board {
     }
 
     moveSelectedPiece() {
-        
+        console.log("moving");
     }
 
-    dropSelectedPiece(fieldX, fieldY) {
-        if(this.selectedPiece === null)
+    dropSelectedPiece(mousePositionX, mousePositionY) {
+        if(this.selectedPiece === null || !this.isMouseInBoundaries(mousePositionX, mousePositionY))
             return;
 
+        const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
-        const newIndex = this.mapCordsToIndex(fieldX, fieldY);
+        const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
+        [this.selectedPiece.x, this.selectedPiece.y] = [newFieldX, newFieldY];
         [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
-        console.log(this.selectedPiece);
+        this.selectedPiece = null;
     }
 
     draw() {
+        this.context.clearRect(0, 0, boardSize, boardSize);
         // board
         this.context.drawImage(this.backgroundSprite, 0, 0, boardSize, boardSize, 0, 0, boardSize, boardSize);
         
