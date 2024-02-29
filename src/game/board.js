@@ -1,10 +1,5 @@
-import { Bishop, King, Knight, Pawn, Queen, Rook } from "./pieces.js";
-
-const boardSize = 876;
-const boardMargin = 50;
-const fieldSize = 97;
-const boardFieldsPerEdge = 8;
-const pieceSize = 96;
+import { PieceFactory } from "./pieces.js";
+import {boardSize, boardMargin, boardFieldsPerEdge, fieldSize, pieceSize} from "./constants.js";
 
 /************** BOARD RANGES *****************
 edge = 876
@@ -31,6 +26,12 @@ export class Board {
         const fieldX = Math.floor((mousePositionX - canvasRect.left - boardMargin) / fieldSize);
         const fieldY = Math.floor((mousePositionY - canvasRect.top - boardMargin) / fieldSize);
         return [fieldX, fieldY];
+    }
+
+    mapCordsToPos(fieldX, fieldY) {
+        const xCord = boardMargin + fieldX * fieldSize + (fieldSize - pieceSize) / 2;
+        const yCord = boardMargin + fieldY * fieldSize + (fieldSize - pieceSize) / 2;
+        return [xCord, yCord];
     }
 
     mapCordsToIndex(fieldX, fieldY) {
@@ -60,6 +61,8 @@ export class Board {
 
     moveSelectedPiece() {
         console.log("moving");
+        // this.context.clearRect(0, 0, boardSize, boardFieldsPerEdge);
+        // this.draw();
     }
 
     dropSelectedPiece(mousePositionX, mousePositionY) {
@@ -69,7 +72,7 @@ export class Board {
         const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
         const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
-        [this.selectedPiece.x, this.selectedPiece.y] = [newFieldX, newFieldY];
+        this.selectedPiece.setPosition(newFieldX, newFieldY);
         [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
         this.selectedPiece = null;
     }
@@ -81,17 +84,15 @@ export class Board {
         
         //pieces
         for(let piece of this.board) {
-            if(piece != null) this.drawPiece(piece.x, piece.y, piece.spritePositionX, piece.spritePositionY);
+            if(piece != null) this.drawSprite(piece.sprite);
         }
     }
 
-    drawPiece(pieceX, pieceY, spritePositionX, spritePositionY) {
-        const xCord = boardMargin + pieceX * fieldSize + (fieldSize - pieceSize) / 2;
-        const yCord = boardMargin + pieceY * fieldSize + (fieldSize - pieceSize) / 2;
+    drawSprite(sprite) {
         this.context.drawImage(this.pieceSprites,
-            spritePositionX * pieceSize, spritePositionY * pieceSize,
+            sprite.imgLeft, sprite.imgTop,
             pieceSize, pieceSize,
-            xCord, yCord,
+            sprite.x, sprite.y,
             pieceSize, pieceSize);
     }
 
@@ -126,48 +127,7 @@ export class Board {
         for(let i = 0; i < boardScheme.length; i++) {
             let x = i % boardFieldsPerEdge;
             let y = Math.floor(i / boardFieldsPerEdge);
-
-            switch (boardScheme[i]) {
-                case "bp":
-                    this.board.push(new Pawn("black", x, y));
-                    break;
-                case "bkn":
-                    this.board.push(new Knight("black", x, y));
-                    break;    
-                case "bb":
-                    this.board.push(new Bishop("black", x, y));
-                    break;
-                case "br":
-                    this.board.push(new Rook("black", x, y));
-                    break;
-                case "bq":
-                    this.board.push(new Queen("black", x, y));
-                    break;
-                case "bki":
-                    this.board.push(new King("black", x, y));
-                    break;
-                case "wp":
-                    this.board.push(new Pawn("white", x, y));
-                    break;
-                case "wkn":
-                    this.board.push(new Knight("white", x, y));
-                    break;    
-                case "wb":
-                    this.board.push(new Bishop("white", x, y));
-                    break;
-                case "wr":
-                    this.board.push(new Rook("white", x, y));
-                    break;
-                case "wq":
-                    this.board.push(new Queen("white", x, y));
-                    break;
-                case "wki":
-                    this.board.push(new King("white", x, y));
-                    break;
-                default:
-                    this.board.push(null);
-                    break;
-            }
+            this.board.push(PieceFactory.createPiece(boardScheme[i], x, y));
         }
     }
 }
