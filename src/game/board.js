@@ -7,6 +7,11 @@ field edge = 96
 first field pixel cords = 49 x 49
 *********************************************/
 
+/* THESE ARE NOT ACCURATE - THERE'S AN ERROR MARGIN FOR MORE CONVINIENG PIECE MOVING */
+const minSpritePosition = boardMargin - pieceSize / 2;
+const maxSpritePosition = boardSize - boardMargin - pieceSize / 2;
+
+
 export class Board {
     constructor() {
         this.canvas = document.getElementById("canvas");
@@ -21,10 +26,23 @@ export class Board {
         this.selectedPiece = null;
     }
 
-    mapMousePosToCords(mousePositionX, mousePositionY) {
+    getMouseRelativePosition(mousePositionX, mousePositionY) {
         const canvasRect = this.canvas.getBoundingClientRect();
-        const fieldX = Math.floor((mousePositionX - canvasRect.left - boardMargin) / fieldSize);
-        const fieldY = Math.floor((mousePositionY - canvasRect.top - boardMargin) / fieldSize);
+        return [
+            mousePositionX - canvasRect.left - boardMargin,
+            mousePositionY - canvasRect.top - boardMargin
+        ];
+    }
+
+    mapMousePosToCords(mousePositionX, mousePositionY) {
+        const [relativeX, relativeY] = this.getMouseRelativePosition(mousePositionX, mousePositionY);
+        let fieldX = Math.max(Math.floor(relativeX / fieldSize));
+        let fieldY = Math.max(Math.floor(relativeY / fieldSize));
+        // corrections are required because of error margin left in isValidSpritePosition()
+        if (fieldX < 0) fieldX = 0;
+        else if (fieldX > boardFieldsPerEdge) fieldX = boardFieldsPerEdge - 1;
+        if (fieldY < 0) fieldX = 0;
+        else if (fieldY > boardFieldsPerEdge) fieldY = boardFieldsPerEdge - 1;
         return [fieldX, fieldY];
     }
 
@@ -46,6 +64,11 @@ export class Board {
             && mousePositionY >= rect.top && mousePositionY < rect.top + (boardSize - boardMargin);
     }
 
+    isValidPiecePosition(positionX, positionY) {
+        return positionX > minSpritePosition && positionX < maxSpritePosition
+            && positionY > minSpritePosition && positionY < maxSpritePosition;
+    }
+
     isPieceSelected() {
         return this.selectedPiece !== null;
     }
@@ -59,19 +82,29 @@ export class Board {
         console.log(this.selectedPiece);
     }
 
-    moveSelectedPiece() {
-        console.log("moving");
-        // this.context.clearRect(0, 0, boardSize, boardFieldsPerEdge);
-        // this.draw();
+    moveSelectedPiece(mousePositionX, mousePositionY) {
+        const [x, y] = this.getMouseRelativePosition(mousePositionX, mousePositionY);
+        console.log(x, y);
+
+        this.context.clearRect(0, 0, boardSize, boardSize);
+        this.selectedPiece.sprite.setPosition(x, y);
+        this.draw();
     }
 
     dropSelectedPiece(mousePositionX, mousePositionY) {
-        if(this.selectedPiece === null || !this.isMouseInBoundaries(mousePositionX, mousePositionY))
+        if(this.selectedPiece === null)
             return;
+
+        if(!this.isValidPiecePosition(this.selectedPiece.spriteX(), this.selectedPiece.spriteY())) {
+            this.selectedPiece.resetSpritePosition();
+            this.selectedPiece = null;
+            return;
+        }
 
         const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
         const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
+        console.log(newFieldX, newFieldY);
         this.selectedPiece.setPosition(newFieldX, newFieldY);
         [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
         this.selectedPiece = null;

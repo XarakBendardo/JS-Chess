@@ -38,11 +38,7 @@ class Piece {
     constructor(color, sprite, x, y) {
         this.color = color;
         this.sprite = sprite;
-        const xCord = boardMargin + x * fieldSize + (fieldSize - pieceSize) / 2;
-        const yCord = boardMargin + y * fieldSize + (fieldSize - pieceSize) / 2;
-        this.sprite.setPosition(xCord, yCord);
-        this.x = x;
-        this.y = y;
+        this.setPosition(x, y);
     }
 
     setPosition(x, y) {
@@ -51,6 +47,10 @@ class Piece {
         const xCord = boardMargin + x * fieldSize + (fieldSize - pieceSize) / 2;
         const yCord = boardMargin + y * fieldSize + (fieldSize - pieceSize) / 2;
         this.sprite.setPosition(xCord, yCord);
+    }
+
+    resetSpritePosition() {
+        this.setPosition(this.x, this.y);
     }
 
     spriteX() {
