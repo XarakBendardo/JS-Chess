@@ -23,10 +23,6 @@ export class Game {
     }
 
     static grabPiece(event) {
-        const rect = Game.board.canvas.getBoundingClientRect();
-        const xOnBoard = event.pageX - rect.left;
-        const yOnBoard = event.pageY - rect.top;
-        const piece = Game.board.mapCordsToField(xOnBoard, yOnBoard);
-        console.log(piece);
+        Game.board.selectPiece(event.pageX, event.pageY);
     }
 }

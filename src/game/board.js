@@ -22,13 +22,48 @@ export class Board {
 
         this.backgroundSprite = document.getElementById("board");
         this.pieceSprites = document.getElementById("pieces");
+
+        this.selectedPiece = null;
     }
 
-    mapCordsToField(mousePositionX, mousePositionY) {
-        const boardX = Math.floor((mousePositionX - boardMargin) / fieldSize);
-        const boardY = Math.floor((mousePositionY - boardMargin) / fieldSize);
-        const pieceIndex = boardY * boardFieldsPerEdge + boardX;
-        return this.board[pieceIndex];
+    mapMousePosToCords(mousePositionX, mousePositionY) {
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const fieldX = Math.floor((mousePositionX - canvasRect.left - boardMargin) / fieldSize);
+        const fieldY = Math.floor((mousePositionY - canvasRect.top - boardMargin) / fieldSize);
+        return [fieldX, fieldY];
+    }
+
+    mapCordsToIndex(fieldX, fieldY) {
+        return fieldY * boardFieldsPerEdge + fieldX;
+    }
+
+    isMouseInBoundaries(mousePositionX, mousePositionY) {
+        const rect = this.canvas.getBoundingClientRect();
+        return mousePositionX >= rect.left + boardMargin && mousePositionX < rect.left + boardSize
+            && mousePositionY >= rect.top && mousePositionY < rect.top + boardSize;
+    }
+
+    selectPiece(mousePositionX, mousePositionY) {
+        if(!this.isMouseInBoundaries(mousePositionX, mousePositionY))
+            return;
+
+        const [fieldX, fieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
+        this.selectedPiece = this.board[this.mapCordsToIndex(fieldX, fieldY)];
+        console.log(this.selectedPiece);
+    }
+
+    moveSelectedPiece() {
+        
+    }
+
+    dropSelectedPiece(fieldX, fieldY) {
+        if(this.selectedPiece === null)
+            return;
+
+        const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
+        const newIndex = this.mapCordsToIndex(fieldX, fieldY);
+        [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+        console.log(this.selectedPiece);
     }
 
     draw() {
