@@ -1,5 +1,6 @@
 import { SpriteFactory } from "./sprite.js";
-import { boardMargin, fieldSize, pieceSize } from "./constants.js";
+import { boardMargin, fieldSize, pieceSize, MoveType } from "./constants.js";
+import { Move } from "./move.js";
 
 export class PieceFactory {
     static createPiece(symbol, column, row) {
@@ -60,12 +61,37 @@ class Piece {
     spriteY() {
         return this.sprite.y;
     }
+
+    getMoves(moveDirection) {
+
+    }
 }
 
 export class Pawn extends Piece {
     constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackPawn() : SpriteFactory.whitePawn();
         super(color, sprite, column, row);
+    }
+
+    getMoves(moveDirection) {
+        let moves = [];
+        if(moveDirection === "up") {
+            if(this.column)
+            moves = [
+                new Move(this.column, this.row - 1, MoveType.move),
+                new Move(this.column - 1, this.row - 1, MoveType.take),
+                new Move(this.column + 1, this.row - 1, MoveType.take),
+            ];
+        }
+        else {
+            moves = [
+                new Move(this.column, this.row + 1, MoveType.move),
+                new Move(this.column - 1, this.row + 1, MoveType.take),
+                new Move(this.column + 1, this.row + 1, MoveType.take),
+            ];
+        }
+
+        return moves;
     }
 }
 
