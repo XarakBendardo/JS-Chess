@@ -74,6 +74,10 @@ export class Board {
         return this.selectedPiece !== null;
     }
 
+    isFieldOccupied(column, row) {
+        return this.board[this.mapCordsToIndex(column, row)] != null;
+    }
+
     selectPiece(mousePositionX, mousePositionY) {
         if(!this.isMouseInBoundaries(mousePositionX, mousePositionY))
             return;
@@ -100,10 +104,16 @@ export class Board {
         }
         else {
             const [newColumn, newRow] = this.mapMousePosToCords(mousePositionX, mousePositionY);
-            const oldIndex = this.mapCordsToIndex(this.selectedPiece.column, this.selectedPiece.row);
             const newIndex = this.mapCordsToIndex(newColumn, newRow);
-            this.selectedPiece.setPosition(newColumn, newRow);
-            [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+            const piece = this.board[newIndex];
+            if(piece != null && piece.color === this.selectedPiece.color) {
+                this.selectedPiece.resetSpritePosition();
+            }
+            else {
+                const oldIndex = this.mapCordsToIndex(this.selectedPiece.column, this.selectedPiece.row);
+                this.selectedPiece.setPosition(newColumn, newRow);
+                [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+            }
         }
         this.selectedPiece = null;
         this.draw();
