@@ -2,32 +2,32 @@ import { SpriteFactory } from "./sprite.js";
 import { boardMargin, fieldSize, pieceSize } from "./constants.js";
 
 export class PieceFactory {
-    static createPiece(symbol, x, y) {
+    static createPiece(symbol, column, row) {
         switch (symbol) {
             case "bp":
-                return new Pawn("black", x, y);
+                return new Pawn("black", column, row);
             case "bkn":
-                return new Knight("black", x, y);   
+                return new Knight("black", column, row);   
             case "bb":
-                return new Bishop("black", x, y);
+                return new Bishop("black", column, row);
             case "br":
-                return new Rook("black", x, y);
+                return new Rook("black", column, row);
             case "bq":
-                return new Queen("black", x, y);
+                return new Queen("black", column, row);
             case "bki":
-                return new King("black", x, y);
+                return new King("black", column, row);
             case "wp":
-                return new Pawn("white", x, y);
+                return new Pawn("white", column, row);
             case "wkn":
-                return new Knight("white", x, y);
+                return new Knight("white", column, row);
             case "wb":
-                return new Bishop("white", x, y);
+                return new Bishop("white", column, row);
             case "wr":
-                return new Rook("white", x, y);
+                return new Rook("white", column, row);
             case "wq":
-                return new Queen("white", x, y);
+                return new Queen("white", column, row);
             case "wki":
-                return new King("white", x, y);
+                return new King("white", column, row);
             default:
                 return null;
         }
@@ -35,22 +35,22 @@ export class PieceFactory {
 }
 
 class Piece {
-    constructor(color, sprite, x, y) {
+    constructor(color, sprite, column, row) {
         this.color = color;
         this.sprite = sprite;
-        this.setPosition(x, y);
+        this.setPosition(column, row);
     }
 
-    setPosition(x, y) {
-        this.x = x;
-        this.y = y;
-        const xCord = boardMargin + x * fieldSize + (fieldSize - pieceSize) / 2;
-        const yCord = boardMargin + y * fieldSize + (fieldSize - pieceSize) / 2;
+    setPosition(column, row) {
+        this.column = column;
+        this.row = row;
+        const xCord = boardMargin + column * fieldSize + (fieldSize - pieceSize) / 2;
+        const yCord = boardMargin + row * fieldSize + (fieldSize - pieceSize) / 2;
         this.sprite.setPosition(xCord, yCord);
     }
 
     resetSpritePosition() {
-        this.setPosition(this.x, this.y);
+        this.setPosition(this.column, this.row);
     }
 
     spriteX() {
@@ -63,43 +63,43 @@ class Piece {
 }
 
 export class Pawn extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackPawn() : SpriteFactory.whitePawn();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }
 
 export class Knight extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackKnight() : SpriteFactory.whiteKnight();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }
 
 export class Bishop extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackBishop() : SpriteFactory.whiteBishop();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }
 
 export class Rook extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackRook() : SpriteFactory.whiteRook();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }
 
 export class Queen extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackQueen() : SpriteFactory.whiteQueen();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }
 
 export class King extends Piece {
-    constructor(color, x, y) {
+    constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackKing() : SpriteFactory.whiteKing();
-        super(color, sprite, x, y);
+        super(color, sprite, column, row);
     }
 }

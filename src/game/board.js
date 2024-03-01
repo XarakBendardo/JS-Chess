@@ -39,24 +39,24 @@ export class Board {
 
     mapMousePosToCords(mousePositionX, mousePositionY) {
         const [relativeX, relativeY] = this.getMouseRelativePosition(mousePositionX, mousePositionY);
-        let fieldX = Math.floor(relativeX / fieldSize);
-        let fieldY = Math.floor(relativeY / fieldSize);
+        let column = Math.floor(relativeX / fieldSize);
+        let row = Math.floor(relativeY / fieldSize);
         // corrections are required because of error margin left in isValidSpritePosition()
-        if (fieldX < 0) fieldX = 0;
-        else if (fieldX > boardFieldsPerEdge) fieldX = boardFieldsPerEdge - 1;
-        if (fieldY < 0) fieldX = 0;
-        else if (fieldY > boardFieldsPerEdge) fieldY = boardFieldsPerEdge - 1;
-        return [fieldX, fieldY];
+        if (column < 0) column = 0;
+        else if (column > boardFieldsPerEdge) column = boardFieldsPerEdge - 1;
+        if (row < 0) column = 0;
+        else if (row > boardFieldsPerEdge) row = boardFieldsPerEdge - 1;
+        return [column, row];
     }
 
-    mapCordsToPos(fieldX, fieldY) {
-        const xCord = boardMargin + fieldX * fieldSize + (fieldSize - pieceSize) / 2;
-        const yCord = boardMargin + fieldY * fieldSize + (fieldSize - pieceSize) / 2;
+    mapCordsToPos(column, row) {
+        const xCord = boardMargin + column * fieldSize + (fieldSize - pieceSize) / 2;
+        const yCord = boardMargin + row * fieldSize + (fieldSize - pieceSize) / 2;
         return [xCord, yCord];
     }
 
-    mapCordsToIndex(fieldX, fieldY) {
-        return fieldY * boardFieldsPerEdge + fieldX;
+    mapCordsToIndex(column, row) {
+        return row * boardFieldsPerEdge + column;
     }
 
     isMouseInBoundaries(mousePositionX, mousePositionY) {
@@ -78,8 +78,8 @@ export class Board {
         if(!this.isMouseInBoundaries(mousePositionX, mousePositionY))
             return;
 
-        const [fieldX, fieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
-        this.selectedPiece = this.board[this.mapCordsToIndex(fieldX, fieldY)];
+        const [column, row] = this.mapMousePosToCords(mousePositionX, mousePositionY);
+        this.selectedPiece = this.board[this.mapCordsToIndex(column, row)];
         this.draw();
     }
 
@@ -99,10 +99,10 @@ export class Board {
             this.selectedPiece.resetSpritePosition();
         }
         else {
-            const [newFieldX, newFieldY] = this.mapMousePosToCords(mousePositionX, mousePositionY);
-            const oldIndex = this.mapCordsToIndex(this.selectedPiece.x, this.selectedPiece.y);
-            const newIndex = this.mapCordsToIndex(newFieldX, newFieldY);
-            this.selectedPiece.setPosition(newFieldX, newFieldY);
+            const [newColumn, newRow] = this.mapMousePosToCords(mousePositionX, mousePositionY);
+            const oldIndex = this.mapCordsToIndex(this.selectedPiece.column, this.selectedPiece.row);
+            const newIndex = this.mapCordsToIndex(newColumn, newRow);
+            this.selectedPiece.setPosition(newColumn, newRow);
             [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
         }
         this.selectedPiece = null;
@@ -157,9 +157,9 @@ export class Board {
 
         this.board = [];
         for(let i = 0; i < boardScheme.length; i++) {
-            let x = i % boardFieldsPerEdge;
-            let y = Math.floor(i / boardFieldsPerEdge);
-            this.board.push(PieceFactory.createPiece(boardScheme[i], x, y));
+            let column = i % boardFieldsPerEdge;
+            let row = Math.floor(i / boardFieldsPerEdge);
+            this.board.push(PieceFactory.createPiece(boardScheme[i], column, row));
         }
     }
 }
