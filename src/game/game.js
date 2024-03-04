@@ -29,7 +29,7 @@ export class Game {
     }
 
     static movePiece(event) {
-        if(Game.board.isPieceSelected())
+        if(Game.board.isSelectedPieceDragged())
             Game.board.moveSelectedPiece(event.pageX, event.pageY);
     }
 

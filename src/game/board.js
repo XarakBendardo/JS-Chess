@@ -1,5 +1,5 @@
 import { PieceFactory } from "./pieces.js";
-import {boardSize, boardMargin, boardFieldsPerEdge, fieldSize, pieceSize} from "./constants.js";
+import {boardSize, boardMargin, boardFieldsPerEdge, fieldSize, pieceSize, selectedFieldColor} from "./constants.js";
 
 /************** BOARD RANGES *****************
 edge = 876
@@ -25,6 +25,7 @@ export class Board {
 
         this.initBoard(playerColor);
         this.selectedPiece = null;
+        this.isDragged = false;
 
         this.draw();
     }
@@ -74,6 +75,10 @@ export class Board {
         return this.selectedPiece !== null;
     }
 
+    isSelectedPieceDragged() {
+        return this.isDragged;
+    }
+
     isFieldOccupied(column, row) {
         return this.board[this.mapCordsToIndex(column, row)] != null;
     }
@@ -84,6 +89,7 @@ export class Board {
 
         const [column, row] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         this.selectedPiece = this.board[this.mapCordsToIndex(column, row)];
+        if(this.selectedPiece !== null) this.isDragged = true;
         this.draw();
     }
 
@@ -113,9 +119,10 @@ export class Board {
                 const oldIndex = this.mapCordsToIndex(this.selectedPiece.column, this.selectedPiece.row);
                 this.selectedPiece.setPosition(newColumn, newRow);
                 [this.board[oldIndex], this.board[newIndex]] = [null, this.selectedPiece];
+                this.selectedPiece = null;
             }
         }
-        this.selectedPiece = null;
+        this.isDragged = false;
         this.draw();
     }
 
@@ -126,8 +133,10 @@ export class Board {
         
         //pieces
         for(let piece of this.board) {
-            if(piece != null) this.drawSprite(piece.sprite);
+            if(piece !== null && piece !== this.selectedPiece) this.drawSprite(piece.sprite);
         }
+
+        if(this.selectedPiece !== null) this.drawSelectedPiece();
     }
 
     drawSprite(sprite) {
@@ -136,6 +145,15 @@ export class Board {
             pieceSize, pieceSize,
             sprite.x, sprite.y,
             pieceSize, pieceSize);
+    }
+
+    drawSelectedPiece() {
+        const [x, y] = this.mapCordsToPos(this.selectedPiece.column, this.selectedPiece.row);
+
+        this.context.clearRect(x, y, fieldSize, fieldSize);
+        this.context.fillStyle = selectedFieldColor(this.selectedPiece.column, this.selectedPiece.row);
+        this.context.fillRect(x, y, fieldSize, fieldSize);
+        this.drawSprite(this.selectedPiece.sprite);
     }
 
     initBoard(color) {
