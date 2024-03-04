@@ -25,7 +25,9 @@ export class Game {
     }
 
     static grabPiece(event) {
-        Game.board.selectPiece(event.pageX, event.pageY);
+        const [x, y] = [event.pageX, event.pageY];
+        if(Game.board.isMouseInBoundaries(x, y))
+            Game.board.selectPiece(event.pageX, event.pageY);
     }
 
     static movePiece(event) {

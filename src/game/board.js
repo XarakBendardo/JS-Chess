@@ -44,9 +44,9 @@ export class Board {
         let row = Math.floor(relativeY / fieldSize);
         // corrections are required because of error margin left in isValidSpritePosition()
         if (column < 0) column = 0;
-        else if (column > boardFieldsPerEdge) column = boardFieldsPerEdge - 1;
-        if (row < 0) column = 0;
-        else if (row > boardFieldsPerEdge) row = boardFieldsPerEdge - 1;
+        else if (column >= boardFieldsPerEdge) column = boardFieldsPerEdge - 1;
+        if (row < 0) row = 0;
+        else if (row >= boardFieldsPerEdge) row = boardFieldsPerEdge - 1;
         return [column, row];
     }
 
@@ -84,9 +84,6 @@ export class Board {
     }
 
     selectPiece(mousePositionX, mousePositionY) {
-        if(!this.isMouseInBoundaries(mousePositionX, mousePositionY))
-            return;
-
         const [column, row] = this.mapMousePosToCords(mousePositionX, mousePositionY);
         this.selectedPiece = this.board[this.mapCordsToIndex(column, row)];
         if(this.selectedPiece !== null) this.isDragged = true;
@@ -112,7 +109,7 @@ export class Board {
             const [newColumn, newRow] = this.mapMousePosToCords(mousePositionX, mousePositionY);
             const newIndex = this.mapCordsToIndex(newColumn, newRow);
             const piece = this.board[newIndex];
-            if(piece != null && piece.color === this.selectedPiece.color) {
+            if(piece !== null && piece.color === this.selectedPiece.color) {
                 this.selectedPiece.resetSpritePosition();
             }
             else {
