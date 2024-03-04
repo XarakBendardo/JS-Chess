@@ -1,5 +1,5 @@
 import { SpriteFactory } from "./sprite.js";
-import { boardMargin, fieldSize, pieceSize, MoveType } from "./constants.js";
+import { boardMargin, fieldSize, pieceSize, MoveType, boardFieldsPerEdge, maxFieldCord } from "./constants.js";
 import { Move } from "./move.js";
 
 export class PieceFactory {
@@ -61,36 +61,30 @@ class Piece {
     spriteY() {
         return this.sprite.y;
     }
-
-    getMoves(moveDirection) {
-
-    }
 }
 
 export class Pawn extends Piece {
     constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackPawn() : SpriteFactory.whitePawn();
         super(color, sprite, column, row);
+        this.firstMove = true;
     }
 
     getMoves(moveDirection) {
         let moves = [];
-        if(moveDirection === "up") {
-            if(this.column)
-            moves = [
-                new Move(this.column, this.row - 1, MoveType.move),
-                new Move(this.column - 1, this.row - 1, MoveType.take),
-                new Move(this.column + 1, this.row - 1, MoveType.take),
-            ];
-        }
-        else {
-            moves = [
-                new Move(this.column, this.row + 1, MoveType.move),
-                new Move(this.column - 1, this.row + 1, MoveType.take),
-                new Move(this.column + 1, this.row + 1, MoveType.take),
-            ];
+        const step = moveDirection === "up" ? -1 : 1;
+        if(this.firstMove) {
+            moves.push(new Move(this.column, this.row + 2 * step, MoveType.move));
+            this.firstMove = false;
         }
 
+        if (this.row < maxFieldCord && this.row > 0) {
+            moves.push(new Move(this.column, this.row + step, MoveType.move));
+            if (this.column > 0)
+                moves.push(new Move(this.column - 1, this.row + step, MoveType.take));
+            if (this.column < maxFieldCord)
+                moves.push(new Move(this.column + 1, this.row + step, MoveType.take));
+        }
         return moves;
     }
 }
@@ -100,12 +94,78 @@ export class Knight extends Piece {
         let sprite = color === "black" ? SpriteFactory.blackKnight() : SpriteFactory.whiteKnight();
         super(color, sprite, column, row);
     }
+
+    getMoves() {
+        let moves = [];
+
+        if(this.column > 0) {
+            if(this.row > 1)
+                moves.push(new Move(this.column - 1, this.row - 2, MoveType.both));
+            if (this.row < maxFieldCord - 1)
+                moves.push(new Move(this.column - 1, this.row + 2, MoveType.both));
+        }
+
+        if(this.column > 1) {
+            if(this.row > 0)
+                moves.push(new Move(this.column - 2, this.row - 1, MoveType.both));
+            if (this.row < maxFieldCord)
+                moves.push(new Move(this.column - 2, this.row + 1, MoveType.both));
+        }
+
+        if(this.column < maxFieldCord) {
+            if(this.row > 1)
+                moves.push(new Move(this.column + 1, this.row - 2, MoveType.both));
+            if (this.row < maxFieldCord - 1)
+                moves.push(new Move(this.column + 1, this.row + 2, MoveType.both));
+        }
+
+        if(this.column < maxFieldCord - 1) {
+            if(this.row > 0)
+                moves.push(new Move(this.column + 2, this.row - 1, MoveType.both));
+            if (this.row < maxFieldCord)
+                moves.push(new Move(this.column + 2, this.row + 1, MoveType.both));
+        }
+        return moves;
+    }
 }
 
 export class Bishop extends Piece {
     constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackBishop() : SpriteFactory.whiteBishop();
         super(color, sprite, column, row);
+    }
+
+    getMoves() {
+        let moves = [];
+        let [row, column] = [this.row + 1, this.column + 1];
+        //DOWN RIGHT
+        while(row < boardFieldsPerEdge && column < boardFieldsPerEdge) {
+            moves.push(new Move(column, row, MoveType.both));
+            row++;
+            column++;
+        }
+        //DOWN LEFT
+        [row, column] = [this.row + 1, this.column - 1];
+        while(row < boardFieldsPerEdge && column > 0) {
+            moves.push(new Move(column, row, MoveType.both));
+            row++;
+            column--;
+        }
+        //UP RIGHT
+        [row, column] = [this.row - 1, this.column + 1];
+        while(row > 0 && column < boardFieldsPerEdge) {
+            moves.push(new Move(column, row, MoveType.both));
+            row--;
+            column++;
+        }
+        //UP LEFT
+        [row, column] = [this.row - 1, this.column - 1];
+        while(row > 0 && column > 0) {
+            moves.push(new Move(column, row, MoveType.both));
+            row--;
+            column--;
+        }
+        return moves;
     }
 }
 
@@ -114,6 +174,21 @@ export class Rook extends Piece {
         let sprite = color === "black" ? SpriteFactory.blackRook() : SpriteFactory.whiteRook();
         super(color, sprite, column, row);
     }
+
+    getMoves() {
+        let moves = [];
+        //ROW
+        for(let row = 0; row < boardFieldsPerEdge; ++row) {
+            if(row !== this.row)
+                moves.push(new Move(this.column, row, MoveType.both));
+        }
+        //COLUMN
+        for(let column = 0; column < boardFieldsPerEdge; ++column) {
+            if(column !== this.column)
+                moves.push(new Move(column, this.row, MoveType.both));
+        }
+        return moves;
+    }
 }
 
 export class Queen extends Piece {
@@ -121,11 +196,83 @@ export class Queen extends Piece {
         let sprite = color === "black" ? SpriteFactory.blackQueen() : SpriteFactory.whiteQueen();
         super(color, sprite, column, row);
     }
+
+    getMoves() {
+        let moves = [];
+        let [row, column] = [this.row + 1, this.column + 1];
+        //DOWN RIGHT
+        while(row < boardFieldsPerEdge && column < boardFieldsPerEdge) {
+            moves.push(new Move(column, row, MoveType.both));
+            row++;
+            column++;
+        }
+        //DOWN LEFT
+        [row, column] = [this.row + 1, this.column - 1];
+        while(row < boardFieldsPerEdge && column > 0) {
+            moves.push(new Move(column, row, MoveType.both));
+            row++;
+            column--;
+        }
+        //UP RIGHT
+        [row, column] = [this.row - 1, this.column + 1];
+        while(row > 0 && column < boardFieldsPerEdge) {
+            moves.push(new Move(column, row, MoveType.both));
+            row--;
+            column++;
+        }
+        //UP LEFT
+        [row, column] = [this.row - 1, this.column - 1];
+        while(row > 0 && column > 0) {
+            moves.push(new Move(column, row, MoveType.both));
+            row--;
+            column--;
+        }
+        //ROW
+        for(row = 0; row < boardFieldsPerEdge; ++row) {
+            if(row !== this.row)
+                moves.push(new Move(this.column, row, MoveType.both));
+        }
+        //COLUMN
+        for(column = 0; column < boardFieldsPerEdge; ++column) {
+            if(column !== this.column)
+                moves.push(new Move(column, this.row, MoveType.both));
+        }
+        return moves;
+    }
 }
 
 export class King extends Piece {
     constructor(color, column, row) {
         let sprite = color === "black" ? SpriteFactory.blackKing() : SpriteFactory.whiteKing();
         super(color, sprite, column, row);
+    }
+
+    getMoves() {
+        let moves = [];
+        if (this.column > 0) {
+            moves.push(new Move(this.column - 1, this.row, MoveType.both));
+            if (this.row > 0)
+                moves.push(new Move(this.column - 1, this.row - 1, MoveType.both));
+
+            if (this.row < maxFieldCord)
+                moves.push(new Move(this.column - 1, this.row + 1, MoveType.both));
+        }
+
+        if (this.column < maxFieldCord) {
+            moves.push(new Move(this.column + 1, this.row, MoveType.both));
+            if (this.row > 0)
+                moves.push(new Move(this.column + 1, this.row - 1, MoveType.both));
+
+            if (this.row < maxFieldCord)
+                moves.push(new Move(this.column + 1, this.row + 1, MoveType.both));
+        }
+
+        if(this.row > 0)
+            moves.push(new Move(this.column, this.row - 1, MoveType.both));
+        
+        if(this.row < maxFieldCord)
+            moves.push(new Move(this.column, this.row + 1, MoveType.both));
+
+        return moves;
     }
 }

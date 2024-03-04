@@ -13,7 +13,7 @@ const maxSpritePosition = boardSize - boardMargin - pieceSize / 2;
 
 
 export class Board {
-    constructor() {
+    constructor(playerColor) {
         this.canvas = document.getElementById("canvas");
         this.canvas.width = boardSize;
         this.canvas.height = boardSize;
@@ -23,7 +23,7 @@ export class Board {
         this.backgroundSprite = document.getElementById("board");
         this.pieceSprites = document.getElementById("pieces");
 
-        this.initBoard();
+        this.initBoard(playerColor);
         this.selectedPiece = null;
 
         this.draw();
@@ -170,6 +170,8 @@ export class Board {
             let column = i % boardFieldsPerEdge;
             let row = Math.floor(i / boardFieldsPerEdge);
             this.board.push(PieceFactory.createPiece(boardScheme[i], column, row));
+            if(this.board[i] !== null)
+                this.board[i].getMoves();
         }
     }
 }

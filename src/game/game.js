@@ -14,7 +14,6 @@ export class Game {
 
         Game.playerColor = playerColor;
         Game.board = new Board(this.playerColor);
-        Game.board.initBoard("black");
 
         document.addEventListener("mousedown", Game.grabPiece);
         document.addEventListener("mousemove", Game.movePiece);
